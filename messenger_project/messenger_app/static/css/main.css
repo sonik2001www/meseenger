@@ -1,0 +1,31 @@
+.home-body {
+    margin: 0;
+    padding: 0;
+    background-color: #181818;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    margin: 0 auto;
+    width: 80%;
+    background-color: #212121;
+}
+
+.nav-container {
+    background-color: #212121;
+    color: white;
+    padding: 10px;
+    border-bottom: 2px solid #181818;
+}
+
+.a-nav {
+    color: #aaaaaa;
+    text-decoration: none;
+    margin: 0 10px;
+    padding: 10px;
+}
+
+.a-nav:hover {
+    background-color: #2f2f2f;
+    border-radius: 4px;
+}

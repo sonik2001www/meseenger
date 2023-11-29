@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block extra_head %}
+    <link type="text/css" href="{% static 'css/chat_with.css' %}" rel="stylesheet"/>
+{% endblock %}
+
+{% block main_section %}
+  <div class="chat_with">
+    <div class="chat_with_head">
+      {% if chat_with.user_1 == request.user %}
+          <p>Chat with {{ chat_with.user_2 }}</p>
+        {% else %}
+          <p>Chat with {{ chat_with.user_1 }}</p>
+        {% endif %}
+    </div>
+    <div class="messages-block">
+        {% for message in messages_list %}
+          {% if message.1 == request.user.username %}
+            <div class="messages-main">
+              <span class="messages-main-span">
+                {% if 'media/' in message.0 %}<img class="img-mes" src="/{{message.0}}">{% else %}<span>{{ message.0 }}</span>{% endif %}
+                <span><small>{{ message.2|get_month_and_day }}</small></span>
+              </span>
+            </div>
+          {% elif message.0 != '' %}
+            <div class="messages-another">
+              <span class="messages-another-span">
+                {% if 'media/' in message.0 %}<img class="img-mes" src="/{{message.0}}">{% else %}<span>{{ message.0 }}</span>{% endif %}
+                <span><small>{{ message.2|get_month_and_day }}</small></span>
+              </span>
+            </div>
+          {% endif %}
+        {% endfor %}
+    </div>
+    <div id="myModal" class="modal">
+      <span id="closeModal" class="close">&times;</span>
+      <img class="modal-content" id="modalContent">
+    </div>
+    <div class="div-send">
+      <form class="form-send" method="POST" action="{% url 'chat_with' user_name=another_user %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <textarea class="input-send" name="messageInput" id="messageInput" oninput="autoResize()" rows="1"></textarea>
+        <input type="file" name="photoInput" id="photoInput" accept="image/*" class="photo-input">
+        <button type="submit" class="but-send">Send</button>
+      </form>
+    </div>
+  </div>
+{% endblock %}
+
+
+{% block bottom_section %}
+  <script>
+    function autoResize() {
+        var textarea = document.getElementById('messageInput');
+        textarea.style.height = 'auto';
+        textarea.style.height = (textarea.scrollHeight + 13) + 'px';
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var textarea = document.getElementById('messageInput');
+
+        textarea.addEventListener('input', function () {
+            autoResize();
+        });
+
+        textarea.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault(); // Prevents a new line on Enter
+                submitForm(event);
+            }
+        });
+    });
+
+
+      // Отримати модальне вікно та кнопку закриття
+  var modal = document.getElementById('myModal');
+  var closeModal = document.getElementById('closeModal');
+
+  // Отримати всі елементи з класом "img-mes"
+  var images = document.getElementsByClassName('img-mes');
+
+  // Додати подію кліку до кожного зображення
+  for (var i = 0; i < images.length; i++) {
+    images[i].addEventListener('click', function() {
+      // При кліку відображаємо модальне вікно та встановлюємо його src
+      modal.style.display = 'block';
+      modalContent.src = this.src;
+    });
+  }
+
+  // Додати подію кліку до кнопки закриття
+  closeModal.addEventListener('click', function() {
+    // При кліку закриваємо модальне вікно
+    modal.style.display = 'none';
+  });
+
+  // Додати подію кліку до модального вікна (закривається при кліку за межами фото)
+  modal.addEventListener('click', function(event) {
+    if (event.target === modal) {
+      modal.style.display = 'none';
+    }
+  });
+
+  </script>
+{% endblock %}

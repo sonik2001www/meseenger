@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    {% block extra_head %}{% endblock %}
+    <link rel="icon" href="/path/to/your/favicon.ico" type="image/x-icon">
+    <link type="text/css" href="{% static 'css/main.css' %}" rel="stylesheet"/>
+    <title>{% block title %}MyChat{% endblock %}</title>
+  </head>
+  <body class="home-body">
+    <div class="container">
+      {% include 'navbar.html' %}
+      {% block main_section %}{% endblock %}
+      {% block bottom_section %}{% endblock %}
+    </div>
+  </body>
+</html>

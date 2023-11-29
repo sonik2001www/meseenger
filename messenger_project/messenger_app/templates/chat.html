@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_head %}
+    <link type="text/css" href="{% static 'css/chat.css' %}" rel="stylesheet"/>
+{% endblock %}
+
+{% block main_section %}
+  <div class="main-section">
+    <div class="all-chats">
+      {% for chat in all_chats %}
+        <div class="chat">
+          <a class="chat-a" href="/chat_with/{% if request.user == chat.user_1 %}{{ chat.user_2.username }}{% else %}{{ chat.user_1.username }}{% endif %}">
+            <div class="chat-div">
+              <div>
+                <img class="logo" src="https://cdn-icons-png.flaticon.com/512/44/44757.png" alt="logo">
+              </div>
+
+              <div>
+                <p class="chat-name">{% if chat.user_1 == request.user %}{{ chat.user_2 }}{% else %}{{ chat.user_1 }}{% endif %}</p>
+                <p class="last-message">{{ chat.last_message }}</p>
+              </div>
+
+              <div class="chat-div-last">
+                <p class="time">{{ chat.last_message_time }}</p>
+<!--                <div class="delete">delete</div>-->
+              </div>
+            </div>
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+    <div class="find-user">
+      <input class="search-user" type="text" id="user-search-input" oninput="searchUsers()" placeholder="🔍 Search">
+
+      <div id="search-results"></div>
+    </div>
+  </div>
+
+{% endblock %}
+
+
+{% block bottom_section %}
+  <script>
+  function searchUsers() {
+    var input = document.getElementById("user-search-input").value;
+
+    // Send AJAX request to Django view for user search
+    fetch(`/search-users/?query=${input}`)
+        .then(response => response.json())
+        .then(data => {
+            var resultsDiv = document.getElementById("search-results");
+            resultsDiv.innerHTML = "";  // Clear previous results
+
+            // Display the first 10 users
+            data.slice(0, 10).forEach(user => {
+                var userDiv = document.createElement("div"); // Create a div for each user
+
+                var userA = document.createElement("a");
+                userA.href = `/chat_with/${user.username}`;
+
+                var userImg = document.createElement("img"); // Create an img element
+                userImg.src = "https://cdn-icons-png.flaticon.com/512/44/44757.png"; // Replace with the actual image URL
+                userImg.alt = "logo"; // Replace with appropriate alt text
+
+                var userP = document.createElement("p");
+                userP.textContent = user.username;  // Display username, adjust as needed
+
+                userA.appendChild(userImg); // Append the image to the anchor element
+                userA.appendChild(userP); // Append the paragraph to the anchor element
+
+                userDiv.appendChild(userA); // Append the anchor element to the div
+                resultsDiv.appendChild(userDiv); // Append the div to the results container
+            });
+        })
+        .catch(error => console.error('Error:', error));
+  }
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var lastMessageElements = document.querySelectorAll('.last-message');
+
+        lastMessageElements.forEach(function (element) {
+            var text = element.textContent;
+
+            if (text.length > 50) {
+                element.textContent = text.slice(0, 50) + '...';
+            }
+        });
+    });
+</script>
+{% endblock %}
+

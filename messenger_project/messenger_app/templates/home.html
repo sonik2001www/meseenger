@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_head %}
+    <link type="text/css" href="{% static 'css/home.css' %}" rel="stylesheet"/>
+{% endblock %}
+
+{% block main_section %}
+  <div class="main-section">
+    <div class="main-section-div">
+      <p class="main-section-p">
+        Welcome to the <strong class="main-section-strong">MyChat</strong> messenger with the exchange of encrypted messages!
+      </p>
+      <div class="main-section-h2-a">
+          <h2 class="main-section-h2">Start Message</h2>
+          <a class="main-section-a" href="{% url 'chat' %}">Go</a>
+      </div>
+    </div>
+  </div>
+{% endblock %}
